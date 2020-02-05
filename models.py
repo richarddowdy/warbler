@@ -38,13 +38,13 @@ class User(db.Model):
     )
 
     email = db.Column(
-        db.Text,
+        db.String(60),
         nullable=False,
         unique=True,
     )
 
     username = db.Column(
-        db.Text,
+        db.String(20),
         nullable=False,
         unique=True,
     )
@@ -60,11 +60,11 @@ class User(db.Model):
     )
 
     bio = db.Column(
-        db.Text,
+        db.String(140),
     )
 
     location = db.Column(
-        db.Text,
+        db.String(50),
     )
 
     password = db.Column(
@@ -94,13 +94,15 @@ class User(db.Model):
     def is_followed_by(self, other_user):
         """Is this user followed by `other_user`?"""
 
-        found_user_list = [user for user in self.followers if user == other_user]
+        found_user_list = [
+            user for user in self.followers if user == other_user]
         return len(found_user_list) == 1
 
     def is_following(self, other_user):
         """Is this user following `other_use`?"""
 
-        found_user_list = [user for user in self.following if user == other_user]
+        found_user_list = [
+            user for user in self.following if user == other_user]
         return len(found_user_list) == 1
 
     @classmethod
