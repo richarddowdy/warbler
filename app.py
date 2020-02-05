@@ -340,6 +340,7 @@ def homepage():
     if g.user:
         messages = (Message
                     .query
+                    .filter(id in following)
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
