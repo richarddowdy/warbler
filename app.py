@@ -3,9 +3,9 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-
+from sqlalchemy import or_
 from forms import UserAddForm, LoginForm, MessageForm, EditUserForm
-from models import db, connect_db, User, Message
+from models import db, connect_db, User, Message, Follows
 
 CURR_USER_KEY = "curr_user"
 
@@ -221,20 +221,28 @@ def profile():
 
     form = EditUserForm(obj=g.user)
 
+    user = User.query.filter_by(id=g.user.id).first()
+
     if form.validate_on_submit():
-        user = User.authenticate(form.username.data,
-                                 form.password.data)
-        if user:
+        valid_user = User.authenticate(user.username,
+                                       form.password.data)
+        if valid_user:
             user.username = form.username.data
             user.email = form.email.data
             user.image_url = form.image_url.data
             user.header_image_url = form.header_image_url.data
-        #password = form.password.data
+            user.bio = form.bio.data
+            user.location = form.location.data
+
+            db.session.commit()
+        
+            return redirect(f'users/{g.user.id}')
+
         else:
             flash("Invalid credentials.", 'danger')
             return redirect(f'/users/{g.user.id}')
     else:
-        return render_template('/users/profile')
+        return render_template('users/edit_profile.html', form=form)
 
 
 @app.route('/users/delete', methods=["POST"])
@@ -314,6 +322,21 @@ def homepage():
     - logged in: 100 most recent messages of followed_users
     """
 
+    # print("FOLLOWING(((((((((((((((((((", g.user.following)
+    messages = Message.query.all()
+    following = [following.id for following in g.user.following]
+    # print("#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", following)
+
+    following_messages = []
+    for message in messages:
+        if message.user_id == g.user.id or message.user_id in following:
+            following_messages.append(message)
+
+    
+    # users = User.query.all()
+    # print(users[0].following)
+    # print(messages[0].user.following[0].id)
+
     if g.user:
         messages = (Message
                     .query
@@ -321,7 +344,7 @@ def homepage():
                     .limit(100)
                     .all())
 
-        return render_template('home.html', messages=messages)
+        return render_template('home.html', messages=following_messages)
 
     else:
         return render_template('home-anon.html')
