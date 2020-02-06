@@ -9,3 +9,16 @@ limit instead of text.
 
 3. FIXED: no way to edit/add user location 
 
+4. **TO FIX**
+Add links to all users ('/users')
+
+5. followed user, their card in /users shows "action='/users/stop-following'
+
+6. TO FIX: when user follows other users, refresh/redirect page to /users
+and not the users following page 
+
+7. TO FIX: extra commas on all models
+
+8. WHEN WE CLICK ON star on a message 
+
+9. HOME PAGE, LOADS SLOWLY (message query loop??)

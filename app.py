@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import or_
 from forms import UserAddForm, LoginForm, MessageForm, EditUserForm
-from models import db, connect_db, User, Message, Follows
+from models import db, connect_db, User, Message, Follows, UserLike
 
 CURR_USER_KEY = "curr_user"
 
@@ -263,6 +263,50 @@ def delete_user():
     return redirect("/signup")
 
 
+@app.route('/users/<int:user_id>/likes')
+def users_likes(user_id):
+    """Show list of user's likes."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    user = User.query.get_or_404(user_id)
+    return render_template('users/likes.html', user=user) 
+    #MAKE HTML TEMPLATE LIKES 
+    
+
+@app.route('/users/<int:user_id>/add-like', methods=['POST'])
+def handle_likes():
+    """Fill star, add liked message to user's likes. Redirect to user's likes page. 
+    """
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    message = Message.query.all()
+    
+    like = False
+    return redirect('/')
+    
+# list of msg ids
+# likes = [msg.id for msg in u.likes]
+    # if msg.id is in likes: remove from DB 
+    # else: add to DB 
+
+
+@app.route('/users/<int:user_id>/delete-like', methods=['POST'])
+def handle_likes():
+    """Unfill star, delete liked message from user's likes. Redirect to user's likes page. 
+    """
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+
+
 ##############################################################################
 # Messages routes:
 
@@ -324,21 +368,21 @@ def homepage():
     - logged in: 100 most recent messages of followed_users
     """
 
-    messages = Message.query.all()
+    if g.user:
+        messages = Message.query.all()
 
     # List of ids that user is following
-    following = [
-        person_user_is_following.id
-        for person_user_is_following in g.user.following]
+        following = [
+            person_user_is_following.id
+            for person_user_is_following in g.user.following]
 
     # List of message ids from people user is following
-    following_messages_ids = []
-    for message in messages:
-        if message.user_id == g.user.id or message.user_id in following:
-            following_messages_ids.append(message.id)
+        following_messages_ids = []
+        for message in messages:
+            if message.user_id == g.user.id or message.user_id in following:
+                following_messages_ids.append(message.id)
 
-    if g.user:
-        queried_messages = (Message
+            queried_messages = (Message
                             .query
                             .filter(Message.id.in_(following_messages_ids))
                             # only message ids if they're in [following_messages_ids]
@@ -346,7 +390,6 @@ def homepage():
                             .limit(100)
                             .all())
         # Querying messages
-
         return render_template('home.html', messages=queried_messages)
 
     else:
