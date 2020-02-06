@@ -276,8 +276,8 @@ def users_likes(user_id):
     #MAKE HTML TEMPLATE LIKES 
     
 
-@app.route('/users/<int:user_id>/add-like', methods=['POST'])
-def handle_likes():
+@app.route('/users/<int:user_id>/add-like/<int:msg_id>', methods=['POST'])
+def handle_likes(user_id, msg_id):
     """Fill star, add liked message to user's likes. Redirect to user's likes page. 
     """
 
@@ -285,10 +285,21 @@ def handle_likes():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    message = Message.query.all()
+    # list of message id's that current user has liked
+    liked_messages = [msg.id for msg in g.user.likes]
     
     like = False
-    return redirect('/')
+
+    if msg_id not in liked_messages:
+        # liked_messages.append(msg_id)
+        # like = True
+
+        new_user_like = UserLike(user_id = g.user.id, message_id = msg_id)
+
+        db.session.add(new_user_like)
+        db.session.commit()
+
+        return redirect(f'/users/{user_id}/likes')
     
 # list of msg ids
 # likes = [msg.id for msg in u.likes]
@@ -296,8 +307,8 @@ def handle_likes():
     # else: add to DB 
 
 
-@app.route('/users/<int:user_id>/delete-like', methods=['POST'])
-def handle_likes():
+@app.route('/users/<int:user_id>/delete-like/<int:msg_id>', methods=['POST'])
+def handle_likes_delete():
     """Unfill star, delete liked message from user's likes. Redirect to user's likes page. 
     """
 
@@ -305,7 +316,9 @@ def handle_likes():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
+    liked_messages = [msg.id for msg in g.user.likes]
 
+    
 
 ##############################################################################
 # Messages routes:

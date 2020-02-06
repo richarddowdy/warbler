@@ -40,7 +40,7 @@
     <ul class="list-group" id="messages">
       {% for msg in messages %}
       <li class="list-group-item">
-        <a href="/messages/{{ msg.id  }}" class="message-link" />
+        <a href="/messages/{{ msg.id  }}" class="message-link">
         <a href="/users/{{ msg.user.id }}">
           <img src="{{ msg.user.image_url }}" alt="" class="timeline-image">
         </a>
@@ -48,7 +48,11 @@
           <a href="/users/{{ msg.user.id }}">@{{ msg.user.username }}</a>
           <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
           <p>{{ msg.text }}</p>
-          <!-- <a href='/like' formaction='POST'><i class="far fa-star fa-10x"></i></a> -->
+          {% if msg.id in liked_msg_ids %}
+          <a href='/users/{{ g.user.id }}/delete-like/{{msg.id}}' formaction='POST'><i class="far fa-star fa-10x"></i></a>
+          {% else %}
+          <a href='/users/{{ g.user.id }}/add-like/{{msg.id}}' formaction='POST'><i class="fas fa-star fa-10x"></i></a>
+          {% endif%}
         </div>
       </li>
       {% endfor %}
