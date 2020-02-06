@@ -9,5 +9,3 @@ limit instead of text.
 
 3. FIXED: no way to edit/add user location 
 
-
-User.following.
