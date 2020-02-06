@@ -38,6 +38,8 @@ def add_user_to_g():
 
     else:
         g.user = None
+# check session on every request, session persists with browser
+# g object disappears, needs to be reset, credentials are set to G and made available only after
 
 
 def do_login(user):
@@ -235,7 +237,7 @@ def profile():
             user.location = form.location.data
 
             db.session.commit()
-        
+
             return redirect(f'users/{g.user.id}')
 
         else:
@@ -322,30 +324,30 @@ def homepage():
     - logged in: 100 most recent messages of followed_users
     """
 
-    # print("FOLLOWING(((((((((((((((((((", g.user.following)
     messages = Message.query.all()
-    following = [following.id for following in g.user.following]
-    # print("#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", following)
 
-    following_messages = []
+    # List of ids that user is following
+    following = [
+        person_user_is_following.id
+        for person_user_is_following in g.user.following]
+
+    # List of message ids from people user is following
+    following_messages_ids = []
     for message in messages:
         if message.user_id == g.user.id or message.user_id in following:
-            following_messages.append(message)
-
-    
-    # users = User.query.all()
-    # print(users[0].following)
-    # print(messages[0].user.following[0].id)
+            following_messages_ids.append(message.id)
 
     if g.user:
-        messages = (Message
-                    .query
-                    .filter(id in following)
-                    .order_by(Message.timestamp.desc())
-                    .limit(100)
-                    .all())
+        queried_messages = (Message
+                            .query
+                            .filter(Message.id.in_(following_messages_ids))
+                            # only message ids if they're in [following_messages_ids]
+                            .order_by(Message.timestamp.desc())
+                            .limit(100)
+                            .all())
+        # Querying messages
 
-        return render_template('home.html', messages=following_messages)
+        return render_template('home.html', messages=queried_messages)
 
     else:
         return render_template('home-anon.html')

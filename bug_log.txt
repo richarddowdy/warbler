@@ -1,0 +1,13 @@
+Warbler Bug Log
+
+1. *TO FIX* 
+Add class="full-width" to header image.
+  - Image header in profile.
+
+2. FIXED: models.py changed User model columns to string w/character
+limit instead of text.
+
+3. FIXED: no way to edit/add user location 
+
+
+User.following.
