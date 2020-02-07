@@ -16,7 +16,12 @@
         <a href="/users/{{ user.id }}">@{{ user.username }}</a>
         <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
         <p>{{ message.text }}</p>
-        <a href='/like' formaction='POST'><i class="far fa-star fa-10x"></i></a>
+        {% if message.id in liked_msg_ids %}
+        <a href='/users/{{ g.user.id }}/delete-like/{{message.id}}' formaction='POST'><i
+            class="fas fa-star fa-2x"></i></a>
+        {% else %}
+        <a href='/users/{{ g.user.id }}/add-like/{{message.id}}' formaction='POST'><i class="far fa-star fa-2x"></i></a>
+        {% endif%}
       </div>
     </li>
 

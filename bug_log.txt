@@ -1,24 +1,22 @@
 Warbler Bug Log
 
-1. *TO FIX* 
+1. FIXED:
 Add class="full-width" to header image.
-  - Image header in profile.
+  - Image header contained in background div
 
 2. FIXED: models.py changed User model columns to string w/character
 limit instead of text.
 
 3. FIXED: no way to edit/add user location 
 
-4. **TO FIX**
-Add links to all users ('/users')
+5. FIXED: followed user, their card in /users shows "action='/users/stop-following'
 
-5. followed user, their card in /users shows "action='/users/stop-following'
-
-6. TO FIX: when user follows other users, refresh/redirect page to /users
+6. FIXED: when user follows other users, refresh/redirect page to /users
 and not the users following page 
 
-7. TO FIX: extra commas on all models
-
-8. WHEN WE CLICK ON star on a message 
+7. FIXED: extra commas on all models
 
 9. HOME PAGE, LOADS SLOWLY (message query loop??)
+
+TO DO:
+  - format icon image?

@@ -3,7 +3,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 from forms import UserAddForm, LoginForm, MessageForm, EditUserForm
 from models import db, connect_db, User, Message, Follows, UserLike
 
@@ -194,7 +194,7 @@ def add_follow(follow_id):
     g.user.following.append(followed_user)
     db.session.commit()
 
-    return redirect(f"/users/{g.user.id}/following")
+    return redirect("/users")
 
 
 @app.route('/users/stop-following/<int:follow_id>', methods=['POST'])
@@ -210,7 +210,7 @@ def stop_following(follow_id):
     db.session.commit()
 
     return redirect(f"/users/{g.user.id}/following")
-
+# 
 
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():
@@ -272,11 +272,13 @@ def users_likes(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/likes.html', user=user) 
-    #MAKE HTML TEMPLATE LIKES 
+
+    liked_messages = [msg for msg in g.user.likes]
+    return render_template('users/likes.html', user=user, liked_messages=liked_messages) 
+    
     
 
-@app.route('/users/<int:user_id>/add-like/<int:msg_id>', methods=['POST'])
+@app.route('/users/<int:user_id>/add-like/<int:msg_id>', methods=['GET', 'POST'])
 def handle_likes(user_id, msg_id):
     """Fill star, add liked message to user's likes. Redirect to user's likes page. 
     """
@@ -288,27 +290,20 @@ def handle_likes(user_id, msg_id):
     # list of message id's that current user has liked
     liked_messages = [msg.id for msg in g.user.likes]
     
-    like = False
-
     if msg_id not in liked_messages:
         # liked_messages.append(msg_id)
         # like = True
 
-        new_user_like = UserLike(user_id = g.user.id, message_id = msg_id)
+        new_user_like = UserLike(user_id=g.user.id, message_id=msg_id)
 
         db.session.add(new_user_like)
         db.session.commit()
 
         return redirect(f'/users/{user_id}/likes')
-    
-# list of msg ids
-# likes = [msg.id for msg in u.likes]
-    # if msg.id is in likes: remove from DB 
-    # else: add to DB 
 
 
-@app.route('/users/<int:user_id>/delete-like/<int:msg_id>', methods=['POST'])
-def handle_likes_delete():
+@app.route('/users/<int:user_id>/delete-like/<int:msg_id>', methods=['GET', 'POST'])
+def handle_likes_delete(user_id, msg_id):
     """Unfill star, delete liked message from user's likes. Redirect to user's likes page. 
     """
 
@@ -318,6 +313,11 @@ def handle_likes_delete():
 
     liked_messages = [msg.id for msg in g.user.likes]
 
+    del_like = UserLike.query.filter(and_(UserLike.message_id==msg_id, UserLike.user_id==user_id)).first()
+    
+    db.session.delete(del_like)
+    db.session.commit()
+    return redirect(f'users/{user_id}/likes')
     
 
 ##############################################################################
@@ -403,7 +403,9 @@ def homepage():
                             .limit(100)
                             .all())
         # Querying messages
-        return render_template('home.html', messages=queried_messages)
+        liked_msg_ids = [msg.id for msg in g.user.likes]
+
+        return render_template('home.html', messages=queried_messages, liked_msg_ids=liked_msg_ids)
 
     else:
         return render_template('home-anon.html')

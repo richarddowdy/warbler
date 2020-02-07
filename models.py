@@ -16,14 +16,14 @@ class Follows(db.Model):
 
     user_being_followed_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id', ondelete="cascade"),
-        primary_key=True,
+        db.ForeignKey('users.id', ondelete='CASCADE'),
+        primary_key=True
     )
 
     user_following_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id', ondelete="cascade"),
-        primary_key=True,
+        db.ForeignKey('users.id', ondelete='CASCADE'),
+        primary_key=True
     )
 
 
@@ -34,24 +34,24 @@ class User(db.Model):
 
     id = db.Column(
         db.Integer,
-        primary_key=True,
+        primary_key=True
     )
 
     email = db.Column(
         db.String(60),
         nullable=False,
-        unique=True,
+        unique=True
     )
 
     username = db.Column(
         db.String(20),
         nullable=False,
-        unique=True,
+        unique=True
     )
 
     image_url = db.Column(
         db.Text,
-        default="/static/images/default-pic.png",
+        default="/static/images/default-pic.png"
     )
 
     header_image_url = db.Column(
@@ -60,23 +60,23 @@ class User(db.Model):
     )
 
     bio = db.Column(
-        db.String(140),
+        db.String(140)
     )
 
     location = db.Column(
-        db.String(50),
+        db.String(50)
     )
 
     password = db.Column(
         db.Text,
-        nullable=False,
+        nullable=False
     )
 
     messages = db.relationship('Message')
 
     likes = db.relationship('Message', secondary='users_likes', backref='likes')
 
-    users_likes = db.relationship('UserLike', backreg='user')
+    users_likes = db.relationship('UserLike', backref='user')
     
     followers = db.relationship(
         "User",
@@ -122,7 +122,7 @@ class User(db.Model):
             username=username,
             email=email,
             password=hashed_pwd,
-            image_url=image_url,
+            image_url=image_url
         )
 
         db.session.add(user)
@@ -173,7 +173,7 @@ class Message(db.Model):
     user_id = db.Column(
         db.Integer,
         db.ForeignKey('users.id', ondelete='CASCADE'),
-        nullable=False
+        nullable=True
     )
 
     user = db.relationship('User')
