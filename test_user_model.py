@@ -39,7 +39,38 @@ class UserModelTestCase(TestCase):
         Message.query.delete()
         Follows.query.delete()
 
+        self.user1 = User.signup(email="user1@gmail.com",
+                            username="username1",
+                            password="password1",
+                            image_url=None
+                            )
+
+        self.user2 = User.signup(email="user2@gmail.com",
+                            username="username2",
+                            password="password2",
+                            image_url=None
+                            )
+
+        self.user3 = User.signup(email="user3@gmail.com",
+                            username="username3",
+                            password="password3",
+                            image_url=None
+                            )
+
+        # db.session.add_all([self.user1, self.user2, self.user3])
+        db.session.commit()
+
         self.client = app.test_client()
+        # self.user1 = user1
+        # self.user2 = user2
+        # self.user3 = user3
+
+
+    def tearDown(self):
+        """Clean up fouled transactions"""
+
+        db.session.rollback()
+
 
     def test_user_model(self):
         """Does basic model work?"""
@@ -56,3 +87,24 @@ class UserModelTestCase(TestCase):
         # User should have no messages & no followers
         self.assertEqual(len(u.messages), 0)
         self.assertEqual(len(u.followers), 0)
+
+
+    def test_is_following(self):
+        """Does is_following properly check who a user is following."""
+
+        # user2 = User(email="user2@gmail.com",
+        #              username="username2",
+        #              password="password2",
+        #              )
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess["curr_user"] = self.user1.id
+                user1 = self.user1
+                user2 = self.user2
+                # user3 = self.user3
+        
+                # import pdb; pdb.set_trace()
+                c.post(f"/users/follow/{user2.id}")
+
+                import pdb; pdb.set_trace()
+                self.assertEqual(user1.is_following(user2), True)
