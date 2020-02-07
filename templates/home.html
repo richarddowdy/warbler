@@ -49,10 +49,10 @@
             <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
             <p>{{ msg.text }}</p>
             {% if msg.id in liked_msg_ids %}
-            <a href='/users/{{ g.user.id }}/delete-like/{{msg.id}}' formaction='POST'><i
+            <a style="color : rgb(0, 214, 203); text-decoration : none" href='/users/{{ g.user.id }}/delete-like/{{msg.id}}' formaction='POST'><i
                 class="fas fa-star fa-2x"></i></a>
             {% else %}
-            <a href='/users/{{ g.user.id }}/add-like/{{msg.id}}' formaction='POST'><i class="far fa-star fa-2x"></i></a>
+            <a style="color : rgb(0,214,203); text-decoration : none" href='/users/{{ g.user.id }}/add-like/{{msg.id}}' formaction='POST'><i class="far fa-star fa-2x"></i></a>
             {% endif%}
           </div>
       </li>

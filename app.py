@@ -382,26 +382,19 @@ def homepage():
     """
 
     if g.user:
-        messages = Message.query.all()
 
     # List of ids that user is following
         following = [
             person_user_is_following.id
-            for person_user_is_following in g.user.following]
+            for person_user_is_following in g.user.following] + [g.user.id]
 
-    # List of message ids from people user is following
-        following_messages_ids = []
-        for message in messages:
-            if message.user_id == g.user.id or message.user_id in following:
-                following_messages_ids.append(message.id)
-
-            queried_messages = (Message
-                            .query
-                            .filter(Message.id.in_(following_messages_ids))
-                            # only message ids if they're in [following_messages_ids]
-                            .order_by(Message.timestamp.desc())
-                            .limit(100)
-                            .all())
+        queried_messages = (Message
+                        .query
+                        .filter(Message.user_id.in_(following))
+                        # only message ids if they're in [following_messages_ids]
+                        .order_by(Message.timestamp.desc())
+                        .limit(100)
+                        .all())
         # Querying messages
         liked_msg_ids = [msg.id for msg in g.user.likes]
 
