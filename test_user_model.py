@@ -104,7 +104,9 @@ class UserModelTestCase(TestCase):
                 # user3 = self.user3
         
                 # import pdb; pdb.set_trace()
-                c.post(f"/users/follow/{user2.id}")
+            resp = c.post(f"/users/follow/{user2.id}", follow_redirects=True)
 
-                import pdb; pdb.set_trace()
-                self.assertEqual(user1.is_following(user2), True)
+            html = resp.get_data(as_text=True)
+
+            import pdb; pdb.set_trace()
+            self.assertEqual(user1.is_following(user2), True)
