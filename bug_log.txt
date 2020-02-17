@@ -16,7 +16,7 @@ and not the users following page
 
 7. FIXED: extra commas on all models
 
-9. HOME PAGE, LOADS SLOWLY (message query loop??)
+9. FIXED: HOME PAGE, LOADS SLOWLY (message query looped twice unnecessarily)
 
 TO DO:
   - format icon image?
