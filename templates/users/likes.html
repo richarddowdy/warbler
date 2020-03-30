@@ -1,9 +1,8 @@
 {% extends 'users/detail.html' %}
 {% block user_details %}
-<div class="col-sm-9">
-  <div class="row">
-
-    <div class="col-lg-6 col-md-8 col-sm-12">
+    <div class="col-sm-6">
+      <h2>My Likes</h2>
+      <hr>
       <ul class="list-group" id="messages">
         {% for msg in liked_messages %}
         <li class="list-group-item">
@@ -11,12 +10,12 @@
             <a href="/users/{{ msg.user.id }}">
               <img src="{{ msg.user.image_url }}" alt="" class="timeline-image">
             </a>
+            <a class="liked-heart" href='/users/{{ g.user.id }}/delete-like/{{msg.id}}' formaction='POST'><i
+                class="fas fa-heart fa-lg"></i></a>
             <div class="message-area">
               <a href="/users/{{ msg.user.id }}">@{{ msg.user.username }}</a>
               <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
               <p>{{ msg.text }}</p>
-              <a href='/users/{{ g.user.id }}/delete-like/{{msg.id}}' formaction='POST'><i
-                  class="fas fa-star fa-2x"></i></a>
 
             </div>
         </li>
@@ -24,6 +23,4 @@
       </ul>
     </div>
 
-  </div>
-</div>
 {% endblock %}

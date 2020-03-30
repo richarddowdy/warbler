@@ -40,20 +40,20 @@
     <ul class="list-group" id="messages">
       {% for msg in messages %}
       <li class="list-group-item">
-        <a href="/messages/{{ msg.id  }}" class="message-link">
+        <a href="/messages/{{ msg.id }}" class="message-link">
           <a href="/users/{{ msg.user.id }}">
-            <img src="{{ msg.user.image_url }}" alt="" class="timeline-image">
+            <img src="{{ msg.user.image_url }}" alt="User Image" class="timeline-image">
           </a>
+          {% if msg.id in liked_msg_ids %}
+          <a class="liked-heart" href='/users/{{ g.user.id }}/delete-like/{{msg.id}}' formaction='POST'><i
+              class="fas fa-heart fa-lg"></i></a>
+          {% else %}
+          <a class="not-liked-heart" href='/users/{{ g.user.id }}/add-like/{{msg.id}}' formaction='POST'><i class="far fa-heart fa-lg"></i></a>
+          {% endif%}
           <div class="message-area">
             <a href="/users/{{ msg.user.id }}">@{{ msg.user.username }}</a>
             <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
             <p>{{ msg.text }}</p>
-            {% if msg.id in liked_msg_ids %}
-            <a style="color : rgb(0, 214, 203); text-decoration : none" href='/users/{{ g.user.id }}/delete-like/{{msg.id}}' formaction='POST'><i
-                class="fas fa-star fa-2x"></i></a>
-            {% else %}
-            <a style="color : rgb(0,214,203); text-decoration : none" href='/users/{{ g.user.id }}/add-like/{{msg.id}}' formaction='POST'><i class="far fa-star fa-2x"></i></a>
-            {% endif%}
           </div>
       </li>
       {% endfor %}

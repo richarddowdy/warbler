@@ -195,6 +195,8 @@ nav + .container {
 
 .message-area {
   margin-left: 10px;
+  position: relative;
+  right: 5%;
 }
 
 #warbler-hero {
@@ -282,6 +284,19 @@ nav + .container {
 
 #messages:not(.no-hover) .list-group-item:hover {
   background-color: #e6ecf0;
+}
+
+.liked-heart{ 
+  color: blue;
+  text-decoration: none;
+  position: relative;
+  left: 85%
+}
+.not-liked-heart{
+  color: blue;
+  text-decoration: none;
+  position: relative;
+  left: 85%
 }
 
 #sidebar-username {
