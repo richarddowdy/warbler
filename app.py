@@ -156,6 +156,7 @@ def users_show(user_id):
                 .order_by(Message.timestamp.desc())
                 .limit(100)
                 .all())
+    
     return render_template('users/show.html',
                            user=user,
                            messages=messages,
@@ -277,7 +278,7 @@ def users_likes(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    liked_messages = [msg for msg in g.user.likes]
+    liked_messages = [msg for msg in user.likes]
     return render_template('users/likes.html',
                            user=user,
                            liked_messages=liked_messages)
